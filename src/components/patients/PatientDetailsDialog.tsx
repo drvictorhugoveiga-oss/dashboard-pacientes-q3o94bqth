@@ -52,6 +52,24 @@ export function PatientDetailsDialog({ patient, open, onOpenChange }: PatientDet
                 <span className="text-muted-foreground">Data de Nascimento:</span>
                 <span className="font-medium">{formatFullDate(patient.birthDate)}</span>
               </div>
+              {patient.phone && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Telefone:</span>
+                  <span className="font-medium">{patient.phone}</span>
+                </div>
+              )}
+              {patient.email && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Email:</span>
+                  <span className="font-medium">{patient.email}</span>
+                </div>
+              )}
+              {patient.address && (
+                <div className="flex flex-col gap-1 mt-1">
+                  <span className="text-muted-foreground">Endereço:</span>
+                  <span className="font-medium text-right">{patient.address}</span>
+                </div>
+              )}
             </div>
           </div>
 

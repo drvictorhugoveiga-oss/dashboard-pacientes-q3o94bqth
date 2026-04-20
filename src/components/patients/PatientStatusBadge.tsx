@@ -1,27 +1,32 @@
 import { Badge } from '@/components/ui/badge'
-import { PatientStatus, PlanType } from '@/types/patient'
-import { cn } from '@/lib/utils'
+import { PlanStatus, PlanType } from '@/types/patient'
 
-export function PatientStatusBadge({ status }: { status: PatientStatus }) {
+export function PatientStatusBadge({ status }: { status: PlanStatus }) {
+  if (status === 'Ativo') {
+    return (
+      <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-transparent">
+        Ativo
+      </Badge>
+    )
+  }
+  if (status === 'Vencido') {
+    return <Badge variant="destructive">Vencido</Badge>
+  }
   return (
     <Badge
-      variant="outline"
-      className={cn(
-        'font-medium border-0',
-        status === 'Ativo' &&
-          'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-        status === 'Inativo' && 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300',
-        status === 'Vencido' && 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-      )}
+      variant="secondary"
+      className="bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-300"
     >
-      {status}
+      Inativo
     </Badge>
   )
 }
 
 export function PlanBadge({ plan }: { plan: PlanType }) {
+  if (!plan) return <span className="text-muted-foreground text-sm">-</span>
+
   return (
-    <Badge variant={plan === 'Sem plano' ? 'secondary' : 'default'} className="font-medium">
+    <Badge variant="outline" className="font-medium bg-primary/5 text-primary border-primary/20">
       {plan}
     </Badge>
   )

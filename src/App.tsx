@@ -7,22 +7,30 @@ import PatientForm from './pages/PatientForm'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
 import { PatientsProvider } from '@/stores/patients-store'
+import { AuthProvider } from '@/hooks/use-auth'
+import Login from './pages/Login'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
     <TooltipProvider>
-      <PatientsProvider>
-        <Toaster />
-        <Sonner />
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/pacientes/novo" element={<PatientForm />} />
-            <Route path="/pacientes/editar/:id" element={<PatientForm />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </PatientsProvider>
+      <AuthProvider>
+        <PatientsProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/pacientes/novo" element={<PatientForm />} />
+                <Route path="/pacientes/editar/:id" element={<PatientForm />} />
+              </Route>
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </PatientsProvider>
+      </AuthProvider>
     </TooltipProvider>
   </BrowserRouter>
 )

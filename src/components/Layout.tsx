@@ -1,7 +1,16 @@
-import { Link, Outlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Users, Settings, Bell, ChevronRight } from 'lucide-react'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { LayoutDashboard, Users, Settings, Bell, ChevronRight, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { useAuth } from '@/hooks/use-auth'
 import {
   SidebarProvider,
   Sidebar,
@@ -63,7 +72,16 @@ export function AppSidebar() {
 
 export default function Layout() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, signOut } = useAuth()
   const isForm = location.pathname.includes('/novo') || location.pathname.includes('/editar')
+
+  const handleLogout = () => {
+    signOut()
+    navigate('/login')
+  }
+
+  const initials = user?.name ? user.name.substring(0, 2).toUpperCase() : 'DR'
 
   return (
     <SidebarProvider>
@@ -100,13 +118,28 @@ export default function Layout() {
               <Bell className="h-5 w-5" />
               <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-primary ring-2 ring-background"></span>
             </Button>
-            <Avatar className="h-8 w-8 ring-2 ring-border cursor-pointer hover:ring-primary transition-all">
-              <AvatarImage
-                src="https://img.usecurling.com/ppl/thumbnail?gender=female&seed=4"
-                alt="Doctor"
-              />
-              <AvatarFallback>DR</AvatarFallback>
-            </Avatar>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="h-8 w-8 ring-2 ring-border cursor-pointer hover:ring-primary transition-all">
+                  <AvatarImage
+                    src="https://img.usecurling.com/ppl/thumbnail?gender=female&seed=4"
+                    alt={user?.name || 'Doctor'}
+                  />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-destructive cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
         <main className="flex-1 overflow-auto p-4 md:p-8 animate-fade-in">

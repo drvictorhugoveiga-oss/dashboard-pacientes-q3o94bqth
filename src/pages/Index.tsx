@@ -13,7 +13,7 @@ import { Patient } from '@/types/patient'
 
 export default function Index() {
   const navigate = useNavigate()
-  const { patients, loading } = usePatientsStore()
+  const { patients, loading, error, refetch } = usePatientsStore()
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
@@ -67,6 +67,19 @@ export default function Index() {
           <TableSkeleton />
           <CardsSkeleton />
         </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-card rounded-lg border shadow-sm border-dashed">
+          <div className="bg-destructive/10 p-4 rounded-full mb-4">
+            <Users className="h-10 w-10 text-destructive" />
+          </div>
+          <h3 className="text-lg font-semibold text-destructive">
+            Ocorreu um erro ao carregar os dados
+          </h3>
+          <p className="text-muted-foreground mt-1 mb-6 max-w-sm">{error}</p>
+          <Button variant="outline" onClick={refetch}>
+            Tentar novamente
+          </Button>
+        </div>
       ) : filteredPatients.length > 0 ? (
         <div className="space-y-4">
           <PatientTable
@@ -81,11 +94,13 @@ export default function Index() {
           />
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-card rounded-lg border shadow-sm border-dashed">
+        <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-card rounded-lg border shadow-sm border-dashed animate-fade-in-up">
           <div className="bg-muted p-4 rounded-full mb-4">
             <Users className="h-10 w-10 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-semibold">Nenhum paciente encontrado</h3>
+          <h3 className="text-lg font-semibold">
+            {searchTerm ? 'Nenhum paciente encontrado' : 'Nenhum paciente cadastrado'}
+          </h3>
           <p className="text-muted-foreground mt-1 mb-6 max-w-sm">
             {searchTerm
               ? 'Tente ajustar os termos de sua busca.'
@@ -98,7 +113,7 @@ export default function Index() {
               if (!searchTerm) navigate('/pacientes/novo')
             }}
           >
-            {searchTerm ? 'Limpar busca' : 'Adicionar o primeiro'}
+            {searchTerm ? 'Limpar busca' : 'Novo Paciente'}
           </Button>
         </div>
       )}

@@ -61,6 +61,38 @@ export function TableSkeleton() {
   )
 }
 
+export function PatientFormSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto space-y-6 animate-pulse">
+      <div>
+        <Skeleton className="h-10 w-1/3 mb-2" />
+        <Skeleton className="h-5 w-2/3" />
+      </div>
+      <div className="space-y-6">
+        <div className="rounded-lg border bg-card shadow-sm p-6 space-y-4">
+          <Skeleton className="h-6 w-1/4 mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full md:col-span-2" />
+          </div>
+        </div>
+        <div className="rounded-lg border bg-card shadow-sm p-6 space-y-4">
+          <Skeleton className="h-6 w-1/4 mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function CardsSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-4 md:hidden">

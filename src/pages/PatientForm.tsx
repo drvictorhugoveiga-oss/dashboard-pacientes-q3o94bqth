@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -8,18 +8,28 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form } from '@/components/ui/form'
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/hooks/use-auth'
-import { createPacienteCompleto } from '@/services/pacientes'
+import {
+  createPacienteCompleto,
+  getPacienteCompleto,
+  updatePacienteCompleto,
+} from '@/services/pacientes'
 import { patientSchema, PatientFormValues } from '@/schemas/patient-schema'
 import { PatientPersonalSection } from '@/components/patients/form/PatientPersonalSection'
 import { PatientPlanSection } from '@/components/patients/form/PatientPlanSection'
 import { PatientProfessionalsSection } from '@/components/patients/form/PatientProfessionalsSection'
+import { PatientFormSkeleton } from '@/components/patients/PatientSkeletons'
 import { usePatientsStore } from '@/stores/patients-store'
+import { AlertCircle } from 'lucide-react'
 
 export default function PatientForm() {
   const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
+  const isEditMode = Boolean(id)
   const { user } = useAuth()
   const { refetch } = usePatientsStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(isEditMode)
+  const [error, setError] = useState(false)
 
   const form = useForm<PatientFormValues>({
     resolver: zodResolver(patientSchema),
@@ -40,6 +50,47 @@ export default function PatientForm() {
   const startDate = form.watch('startDate')
   const planType = form.watch('plan')
   const professionals = form.watch('professionals')
+
+  const loadData = async () => {
+    if (!id) return
+    setIsLoading(true)
+    setError(false)
+    try {
+      const data = await getPacienteCompleto(id)
+      const birthDateStr = data.paciente.data_nascimento
+        ? data.paciente.data_nascimento.substring(0, 10)
+        : ''
+      const startDateStr = data.plano?.data_inicio ? data.plano.data_inicio.substring(0, 10) : ''
+      const endDateStr = data.plano?.data_termino ? data.plano.data_termino.substring(0, 10) : ''
+
+      form.reset({
+        name: data.paciente.nome,
+        birthDate: birthDateStr,
+        phone: data.paciente.telefone || '',
+        email: data.paciente.email || '',
+        address: data.paciente.endereco || '',
+        plan: data.plano?.tipo_plano ? (data.plano.tipo_plano as any) : 'Sem plano',
+        startDate: startDateStr || new Date().toISOString().split('T')[0],
+        endDate: endDateStr,
+        status: data.plano?.status ? (data.plano.status as any) : 'Ativo',
+        professionals: data.profissionais.map((p) => ({
+          profissional: p.profissional,
+          tipoSessao: p.tipo_sessao,
+          valorSessao: p.valor_sessao,
+          frequencia: p.frequencia,
+        })) as any[],
+      })
+    } catch (e) {
+      console.error(e)
+      setError(true)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [id])
 
   useEffect(() => {
     if (startDate && planType && planType !== 'Sem plano') {
@@ -73,8 +124,13 @@ export default function PatientForm() {
     if (!user?.id) return toast.error('Sua sessão expirou.')
     setIsSubmitting(true)
     try {
-      await createPacienteCompleto(data, user.id, totalMargin)
-      toast.success('Paciente cadastrado com sucesso!')
+      if (isEditMode && id) {
+        await updatePacienteCompleto(id, data, user.id, totalMargin)
+        toast.success('Paciente atualizado com sucesso!')
+      } else {
+        await createPacienteCompleto(data, user.id, totalMargin)
+        toast.success('Paciente criado com sucesso!')
+      }
       refetch()
       navigate('/')
     } catch (error) {
@@ -85,12 +141,36 @@ export default function PatientForm() {
     }
   }
 
+  if (isLoading) {
+    return <PatientFormSkeleton />
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 animate-in fade-in zoom-in duration-300">
+        <div className="bg-destructive/10 p-4 rounded-full">
+          <AlertCircle className="w-8 h-8 text-destructive" />
+        </div>
+        <p className="text-lg text-foreground font-medium max-w-[300px]">
+          Erro ao carregar dados do paciente. Por favor, tente novamente.
+        </p>
+        <Button onClick={loadData} variant="outline" className="mt-2">
+          Tentar novamente
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Novo Paciente</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {isEditMode ? 'Editar Paciente' : 'Novo Paciente'}
+        </h1>
         <p className="text-muted-foreground mt-1">
-          Cadastre os dados pessoais, configure o plano e vincule os profissionais.
+          {isEditMode
+            ? 'Edite os dados pessoais, configure o plano e vincule os profissionais.'
+            : 'Cadastre os dados pessoais, configure o plano e vincule os profissionais.'}
         </p>
       </div>
 
@@ -154,7 +234,7 @@ export default function PatientForm() {
               Cancelar
             </Button>
             <Button type="submit" disabled={isSubmitting} className="min-w-[150px]">
-              {isSubmitting ? 'Salvando...' : 'Salvar paciente'}
+              {isSubmitting ? 'Salvando...' : isEditMode ? 'Atualizar Paciente' : 'Criar Paciente'}
             </Button>
           </div>
         </form>

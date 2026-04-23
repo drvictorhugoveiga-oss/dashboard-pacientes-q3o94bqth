@@ -1,5 +1,13 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, Settings, Bell, ChevronRight, LogOut } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  Bell,
+  ChevronRight,
+  LogOut,
+  CalendarDays,
+} from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -29,6 +37,7 @@ export function AppSidebar() {
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, url: '/' },
     { title: 'Pacientes', icon: Users, url: '/' },
+    { title: 'Sessões', icon: CalendarDays, url: '/sessoes' },
     { title: 'Configurações', icon: Settings, url: '#' },
   ]
 

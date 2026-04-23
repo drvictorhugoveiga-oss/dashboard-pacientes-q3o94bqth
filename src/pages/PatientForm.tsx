@@ -14,6 +14,7 @@ import {
   updatePacienteCompleto,
 } from '@/services/pacientes'
 import { patientSchema, PatientFormValues } from '@/schemas/patient-schema'
+import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import { PatientPersonalSection } from '@/components/patients/form/PatientPersonalSection'
 import { PatientPlanSection } from '@/components/patients/form/PatientPlanSection'
 import { PatientProfessionalsSection } from '@/components/patients/form/PatientProfessionalsSection'
@@ -135,7 +136,21 @@ export default function PatientForm() {
       navigate('/')
     } catch (error) {
       console.error(error)
-      toast.error('Erro ao salvar paciente. Verifique os dados e tente novamente.')
+      const fieldErrors = extractFieldErrors(error)
+      if (Object.keys(fieldErrors).length > 0) {
+        Object.entries(fieldErrors).forEach(([field, msg]) => {
+          let formField: any = field
+          if (field === 'nome') formField = 'name'
+          if (field === 'data_nascimento') formField = 'birthDate'
+          if (field === 'telefone') formField = 'phone'
+          if (field === 'endereco') formField = 'address'
+
+          form.setError(formField, { type: 'server', message: msg as string })
+        })
+        toast.error('Erro de validação. Verifique os campos.')
+      } else {
+        toast.error('Erro ao salvar paciente. Verifique os dados e tente novamente.')
+      }
     } finally {
       setIsSubmitting(false)
     }

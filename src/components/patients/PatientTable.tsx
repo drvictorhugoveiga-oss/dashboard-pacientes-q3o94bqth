@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Patient } from '@/types/patient'
 import {
   Table,
@@ -8,9 +9,22 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Eye, Pencil, User } from 'lucide-react'
+import { Eye, Pencil, Trash2, User } from 'lucide-react'
 import { PatientStatusBadge, PlanBadge } from './PatientStatusBadge'
 import { formatDate } from '@/lib/date-utils'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { deletePaciente } from '@/services/pacientes'
+import { toast } from 'sonner'
+import { usePatientsStore } from '@/stores/patients-store'
 
 interface PatientTableProps {
   patients: Patient[]
@@ -19,6 +33,25 @@ interface PatientTableProps {
 }
 
 export function PatientTable({ patients, onViewDetails, onEdit }: PatientTableProps) {
+  const { refetch } = usePatientsStore()
+  const [patientToDelete, setPatientToDelete] = useState<Patient | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    if (!patientToDelete) return
+    setIsDeleting(true)
+    try {
+      await deletePaciente(patientToDelete.id)
+      toast.success('Paciente removido com sucesso.')
+      refetch()
+    } catch (error) {
+      toast.error('Erro ao remover paciente.')
+    } finally {
+      setIsDeleting(false)
+      setPatientToDelete(null)
+    }
+  }
+
   return (
     <div className="hidden md:block rounded-lg border bg-card shadow-sm overflow-hidden animate-fade-in-up">
       <Table>
@@ -78,12 +111,48 @@ export function PatientTable({ patients, onViewDetails, onEdit }: PatientTablePr
                   >
                     <Pencil className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
                   </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setPatientToDelete(patient)}
+                    title="Excluir"
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/80 transition-colors" />
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      <AlertDialog
+        open={!!patientToDelete}
+        onOpenChange={(open) => !open && setPatientToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o paciente <strong>{patientToDelete?.name}</strong>?
+              Esta ação não pode ser desfeita e removerá todos os dados vinculados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                handleDelete()
+              }}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

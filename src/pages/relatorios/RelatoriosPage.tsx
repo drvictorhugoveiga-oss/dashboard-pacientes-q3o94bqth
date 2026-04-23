@@ -13,7 +13,7 @@ import { PagamentosTable } from './PagamentosTable'
 import { FinancialCharts } from './Charts'
 import { getSessoes } from '@/services/sessoes'
 import { getPagamentos, updatePagamento, PagamentoProfissional } from '@/services/pagamentos'
-import { getPlanosExpandidos } from '@/services/planos'
+import { getPlanosPacientesExpandidos } from '@/services/planos'
 import { isAfter, isBefore, subMonths, startOfMonth, endOfMonth, parseISO } from 'date-fns'
 import { toast } from 'sonner'
 import { Download, FileText, FilterX } from 'lucide-react'
@@ -32,7 +32,7 @@ export default function RelatoriosPage() {
       const [sRes, pRes, plRes] = await Promise.all([
         getSessoes(),
         getPagamentos(),
-        getPlanosExpandidos(),
+        getPlanosPacientesExpandidos(),
       ])
       setSessoes(sRes)
       setPagamentos(pRes)

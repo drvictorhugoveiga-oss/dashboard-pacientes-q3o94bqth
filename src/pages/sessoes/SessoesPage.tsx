@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
 import { getSessoes, updateSessao } from '@/services/sessoes'
 import { getPacientes } from '@/services/pacientes'
-import { getPlanos } from '@/services/planos'
+import { getPlanosPacientesExpandidos } from '@/services/planos'
 import { useRealtime } from '@/hooks/use-realtime'
 import { isSameMonth, subMonths, isAfter, startOfMonth, parseISO, isBefore } from 'date-fns'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
@@ -45,7 +45,7 @@ export default function SessoesPage() {
       const [sessData, pacData, planData] = await Promise.all([
         getSessoes(),
         getPacientes(),
-        getPlanos(),
+        getPlanosPacientesExpandidos(),
       ])
       setSessoes(sessData as Sessao[])
       setPacientes(pacData)
@@ -95,9 +95,9 @@ export default function SessoesPage() {
 
   const handleSaveEdit = async (id: string, data: any) => {
     try {
-      const plano = planos.find((p) => p.paciente === data.paciente)?.id
-      if (!plano) throw new Error('Paciente não possui plano ativo.')
-      await updateSessao(id, { ...data, plano })
+      const planoViva = planos.find((p) => p.paciente_id === data.paciente)?.id
+      if (!planoViva) throw new Error('Paciente não possui plano VIVA ativo.')
+      await updateSessao(id, { ...data, plano_viva: planoViva })
       toast({ title: 'Sessão atualizada com sucesso' })
       setEditingSessao(null)
     } catch (err: any) {

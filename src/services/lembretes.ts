@@ -4,7 +4,7 @@ export interface Lembrete {
   id: string
   user: string
   paciente: string
-  plano: string
+  plano_viva?: string
   profissional: string
   tipo_contato: string
   data_prevista: string
@@ -15,8 +15,12 @@ export interface Lembrete {
     paciente?: {
       nome: string
     }
-    plano?: {
-      tipo_plano: string
+    plano_viva?: {
+      expand?: {
+        plano_viva_id?: {
+          nome_plano: string
+        }
+      }
     }
   }
 }
@@ -61,7 +65,7 @@ export const getLembretes = async (
   return pb.collection('lembretes').getFullList<Lembrete>({
     filter: filterString,
     sort: 'data_prevista',
-    expand: 'paciente,plano',
+    expand: 'paciente,plano_viva.plano_viva_id',
   })
 }
 

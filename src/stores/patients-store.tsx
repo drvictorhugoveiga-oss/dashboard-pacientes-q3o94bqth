@@ -58,7 +58,7 @@ export const PatientsProvider = ({ children }: { children: ReactNode }) => {
   )
 
   useRealtime(
-    'planos_skip',
+    'planos_pacientes',
     () => {
       loadData()
     },

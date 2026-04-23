@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getPlanosExpandidos } from '@/services/planos'
+import { getPlanosPacientesExpandidos } from '@/services/planos'
 import pb from '@/lib/pocketbase/client'
 import {
   Table,
@@ -27,18 +27,13 @@ function formatDate(dateStr: string | undefined | null) {
 }
 
 export default function PlanosPage() {
-  const [planos, setPlanos] = useState<any[]>([])
   const [planosViva, setPlanosViva] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
   const loadData = async () => {
     try {
-      const [data, vivaData] = await Promise.all([
-        getPlanosExpandidos(),
-        pb.collection('planos_pacientes').getFullList({ expand: 'paciente_id,plano_viva_id' }),
-      ])
-      setPlanos(data)
+      const vivaData = await getPlanosPacientesExpandidos()
       setPlanosViva(vivaData)
       setError(false)
     } catch (err) {
@@ -53,7 +48,6 @@ export default function PlanosPage() {
     loadData()
   }, [])
 
-  useRealtime('planos_skip', loadData)
   useRealtime('planos_pacientes', loadData)
 
   if (loading) {
@@ -93,9 +87,9 @@ export default function PlanosPage() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Planos Skip & VIVA</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Planos VIVA</h1>
           <p className="text-muted-foreground">
-            Gerencie e visualize todos os planos contratados pelos pacientes.
+            Gerencie e visualize todos os planos VIVA contratados pelos pacientes.
           </p>
         </div>
         <Button asChild variant="outline">
@@ -165,66 +159,6 @@ export default function PlanosPage() {
                           style: 'currency',
                           currency: 'BRL',
                         }).format(plano.saldo_liquido || 0)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Planos Skip</CardTitle>
-          <CardDescription>Visão geral de todos os planos Skip antigos.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {planos.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-lg border border-dashed">
-              Nenhum plano cadastrado.
-            </div>
-          ) : (
-            <div className="rounded-md border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/50">
-                    <TableHead>Paciente</TableHead>
-                    <TableHead>Tipo de Plano</TableHead>
-                    <TableHead>Data de Início</TableHead>
-                    <TableHead>Data de Término</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Margem Total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {planos.map((plano) => (
-                    <TableRow key={plano.id}>
-                      <TableCell className="font-medium">
-                        {plano.expand?.paciente?.nome || 'Paciente não encontrado'}
-                      </TableCell>
-                      <TableCell>{plano.tipo_plano}</TableCell>
-                      <TableCell>{formatDate(plano.data_inicio)}</TableCell>
-                      <TableCell>{formatDate(plano.data_termino)}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            plano.status === 'Ativo'
-                              ? 'default'
-                              : plano.status === 'Vencido'
-                                ? 'destructive'
-                                : 'secondary'
-                          }
-                        >
-                          {plano.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-medium text-primary">
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        }).format(plano.margem_total || 0)}
                       </TableCell>
                     </TableRow>
                   ))}

@@ -19,17 +19,19 @@ export function PlanosTable({ planos, sessoes }: { planos: any[]; sessoes: any[]
 
   const data = planos
     .map((p) => {
-      const pSessoes = sessoes.filter((s) => s.plano === p.id)
+      const pSessoes = sessoes.filter((s) => s.plano_viva === p.id)
       const realizadas = pSessoes.filter((s) => s.status === 'Realizada')
-      const receita = realizadas.reduce((acc, s) => acc + s.valor_sessao, 0)
-      const custo = p.margem_total || receita * 0.5
-      const margem = receita - custo
+      const receita = p.valor_total_plano || 0
+      const custo = p.custo_equipe_total || receita * 0.5
+      const margem = p.saldo_liquido || receita - custo
       const mPerc = receita > 0 ? (margem / receita) * 100 : 0
-      const previstas = p.tipo_plano === '3 meses' ? 12 : p.tipo_plano === '6 meses' ? 24 : 16
+
+      const vivaConfig = p.expand?.plano_viva_id
+      const previstas = vivaConfig ? vivaConfig.duracao_meses * 4 : 0
 
       return { ...p, receita, custo, margem, mPerc, pSessoes, realizadas, previstas }
     })
-    .filter((p) => p.receita > 0 || p.custo > 0)
+    .filter((p) => p.receita > 0 || p.custo > 0 || p.realizadas.length > 0)
 
   return (
     <Card>
@@ -59,9 +61,9 @@ export function PlanosTable({ planos, sessoes }: { planos: any[]; sessoes: any[]
               {data.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">
-                    {item.expand?.paciente?.nome || 'N/A'}
+                    {item.expand?.paciente_id?.nome || 'N/A'}
                   </TableCell>
-                  <TableCell>{item.tipo_plano}</TableCell>
+                  <TableCell>{item.expand?.plano_viva_id?.nome_plano || 'N/A'}</TableCell>
                   <TableCell>
                     {item.realizadas.length} / {item.previstas}
                   </TableCell>

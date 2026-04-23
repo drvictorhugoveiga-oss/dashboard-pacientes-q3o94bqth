@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-23T03:27:26.575Z",
+  "generatedAt": "2026-04-23T03:35:18.650Z",
   "collections": [
     {
       "name": "users",
@@ -110,162 +110,6 @@
       "indexes": []
     },
     {
-      "name": "planos_skip",
-      "type": "base",
-      "apiRules": {
-        "list": "@request.auth.id != '' && user = @request.auth.id",
-        "view": "@request.auth.id != '' && user = @request.auth.id",
-        "create": "@request.auth.id != ''",
-        "update": "@request.auth.id != '' && user = @request.auth.id",
-        "delete": "@request.auth.id != '' && user = @request.auth.id"
-      },
-      "fields": [
-        {
-          "name": "user",
-          "type": "relation",
-          "required": true,
-          "system": false,
-          "collectionRef": "users"
-        },
-        {
-          "name": "paciente",
-          "type": "relation",
-          "required": true,
-          "system": false,
-          "collectionRef": "pacientes"
-        },
-        {
-          "name": "tipo_plano",
-          "type": "select",
-          "required": false,
-          "system": false,
-          "selectValues": ["3 meses", "4 meses", "6 meses"]
-        },
-        {
-          "name": "data_inicio",
-          "type": "date",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "data_termino",
-          "type": "date",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "status",
-          "type": "select",
-          "required": false,
-          "system": false,
-          "selectValues": ["Ativo", "Inativo", "Vencido"]
-        },
-        {
-          "name": "margem_total",
-          "type": "number",
-          "required": false,
-          "system": false
-        },
-        {
-          "name": "created",
-          "type": "autodate",
-          "required": false,
-          "system": false,
-          "autodateTriggers": ["onCreate"]
-        },
-        {
-          "name": "updated",
-          "type": "autodate",
-          "required": false,
-          "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
-        }
-      ],
-      "indexes": []
-    },
-    {
-      "name": "profissionais_sessoes",
-      "type": "base",
-      "apiRules": {
-        "list": "@request.auth.id != '' && user = @request.auth.id",
-        "view": "@request.auth.id != '' && user = @request.auth.id",
-        "create": "@request.auth.id != ''",
-        "update": "@request.auth.id != '' && user = @request.auth.id",
-        "delete": "@request.auth.id != '' && user = @request.auth.id"
-      },
-      "fields": [
-        {
-          "name": "user",
-          "type": "relation",
-          "required": true,
-          "system": false,
-          "collectionRef": "users"
-        },
-        {
-          "name": "plano",
-          "type": "relation",
-          "required": true,
-          "system": false,
-          "collectionRef": "planos_skip"
-        },
-        {
-          "name": "profissional",
-          "type": "select",
-          "required": true,
-          "system": false,
-          "selectValues": [
-            "Médico",
-            "Nutricionista",
-            "Enfermeira",
-            "Fonoaudióloga",
-            "Psicóloga",
-            "Fisioterapeuta"
-          ]
-        },
-        {
-          "name": "tipo_sessao",
-          "type": "select",
-          "required": true,
-          "system": false,
-          "selectValues": ["Consulta", "Avaliação", "Acompanhamento", "Retorno"]
-        },
-        {
-          "name": "valor_sessao",
-          "type": "number",
-          "required": true,
-          "system": false
-        },
-        {
-          "name": "frequencia",
-          "type": "select",
-          "required": true,
-          "system": false,
-          "selectValues": ["Semanal", "Quinzenal", "Mensal", "Conforme demanda"]
-        },
-        {
-          "name": "total_sessoes_calculado",
-          "type": "number",
-          "required": true,
-          "system": false
-        },
-        {
-          "name": "created",
-          "type": "autodate",
-          "required": false,
-          "system": false,
-          "autodateTriggers": ["onCreate"]
-        },
-        {
-          "name": "updated",
-          "type": "autodate",
-          "required": false,
-          "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
-        }
-      ],
-      "indexes": []
-    },
-    {
       "name": "lembretes",
       "type": "base",
       "apiRules": {
@@ -289,13 +133,6 @@
           "required": true,
           "system": false,
           "collectionRef": "pacientes"
-        },
-        {
-          "name": "plano",
-          "type": "relation",
-          "required": true,
-          "system": false,
-          "collectionRef": "planos_skip"
         },
         {
           "name": "profissional",
@@ -356,6 +193,13 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "plano_viva",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "planos_pacientes"
         }
       ],
       "indexes": []
@@ -384,13 +228,6 @@
           "required": true,
           "system": false,
           "collectionRef": "pacientes"
-        },
-        {
-          "name": "plano",
-          "type": "relation",
-          "required": true,
-          "system": false,
-          "collectionRef": "planos_skip"
         },
         {
           "name": "profissional",
@@ -451,6 +288,13 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "plano_viva",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "planos_pacientes"
         }
       ],
       "indexes": [

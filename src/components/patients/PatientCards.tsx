@@ -23,7 +23,7 @@ export function PatientCards({ patients, onViewDetails, onEdit }: PatientCardsPr
               </div>
               <CardTitle className="text-lg font-semibold">{patient.name}</CardTitle>
             </div>
-            <PatientStatusBadge status={patient.status} />
+            <PatientStatusBadge status={patient.vivaStatus} />
           </CardHeader>
           <CardContent className="px-5 pb-4 space-y-3 text-sm">
             <div className="flex items-center text-muted-foreground">
@@ -37,17 +37,17 @@ export function PatientCards({ patients, onViewDetails, onEdit }: PatientCardsPr
               <Activity className="mr-2 h-4 w-4" />
               Plano:{' '}
               <span className="ml-1">
-                <PlanBadge plan={patient.plan} />
+                <PlanBadge plan={patient.vivaPlanName || ''} />
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2 pt-2 border-t mt-2">
               <div>
                 <p className="text-xs text-muted-foreground">Início</p>
-                <p className="font-medium">{formatDate(patient.startDate)}</p>
+                <p className="font-medium">{formatDate(patient.vivaStartDate)}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Término</p>
-                <p className="font-medium">{formatDate(patient.endDate)}</p>
+                <p className="font-medium">{formatDate(patient.vivaEndDate)}</p>
               </div>
             </div>
           </CardContent>

@@ -10,7 +10,7 @@ export interface Sessao {
   id: string
   data_sessao: string
   paciente: string
-  plano: string
+  plano_viva?: string
   profissional: string
   tipo_sessao: string
   valor_sessao: number
@@ -18,6 +18,6 @@ export interface Sessao {
   motivo_cancelamento?: string
   expand?: {
     paciente?: { id: string; nome: string }
-    plano?: { id: string; tipo_plano: string }
+    plano_viva?: { id: string; expand?: { plano_viva_id?: { nome_plano: string } } }
   }
 }

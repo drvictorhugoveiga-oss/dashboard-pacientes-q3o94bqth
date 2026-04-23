@@ -64,9 +64,10 @@ export function PlanDetailModal({ plan, onClose }: { plan: any; onClose: () => v
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Detalhes do Plano - {plan.expand?.paciente?.nome}</DialogTitle>
+          <DialogTitle>Detalhes do Plano - {plan.expand?.paciente_id?.nome}</DialogTitle>
           <DialogDescription>
-            {plan.tipo_plano} • {formatDate(plan.data_inicio)} até {formatDate(plan.data_termino)}
+            {plan.expand?.plano_viva_id?.nome_plano} • {formatDate(plan.data_inicio)} até{' '}
+            {formatDate(plan.data_termino)}
           </DialogDescription>
         </DialogHeader>
 

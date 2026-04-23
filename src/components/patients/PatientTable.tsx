@@ -60,7 +60,7 @@ export function PatientTable({ patients, onViewDetails, onEdit }: PatientTablePr
           <TableRow className="bg-muted/50 hover:bg-muted/50">
             <TableHead>Nome do paciente</TableHead>
             <TableHead>Nascimento</TableHead>
-            <TableHead>Plano Skip</TableHead>
+            <TableHead>Plano VIVA</TableHead>
             <TableHead>Início</TableHead>
             <TableHead>Término</TableHead>
             <TableHead>Status</TableHead>
@@ -85,14 +85,16 @@ export function PatientTable({ patients, onViewDetails, onEdit }: PatientTablePr
                 {formatDate(patient.birthDate)}
               </TableCell>
               <TableCell>
-                <PlanBadge plan={patient.plan} />
+                <PlanBadge plan={patient.vivaPlanName || ''} />
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {formatDate(patient.startDate)}
+                {formatDate(patient.vivaStartDate)}
               </TableCell>
-              <TableCell className="text-muted-foreground">{formatDate(patient.endDate)}</TableCell>
+              <TableCell className="text-muted-foreground">
+                {formatDate(patient.vivaEndDate)}
+              </TableCell>
               <TableCell>
-                <PatientStatusBadge status={patient.status} />
+                <PatientStatusBadge status={patient.vivaStatus} />
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">

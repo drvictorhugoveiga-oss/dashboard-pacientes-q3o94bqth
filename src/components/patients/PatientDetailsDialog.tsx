@@ -31,14 +31,14 @@ export function PatientDetailsDialog({ patient, open, onOpenChange }: PatientDet
             {patient.name}
           </DialogTitle>
           <DialogDescription>
-            Detalhes completos do perfil e status do plano Skip.
+            Detalhes completos do perfil e status do plano VIVA.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-6 py-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-muted-foreground">Status Atual</span>
-            <PatientStatusBadge status={patient.status} />
+            <PatientStatusBadge status={patient.vivaStatus} />
           </div>
 
           <Separator />
@@ -77,20 +77,20 @@ export function PatientDetailsDialog({ patient, open, onOpenChange }: PatientDet
 
           <div className="space-y-4">
             <h4 className="text-sm font-semibold flex items-center gap-2">
-              <Activity className="h-4 w-4 text-primary" /> Detalhes do Plano
+              <Activity className="h-4 w-4 text-primary" /> Detalhes do Plano VIVA
             </h4>
             <div className="grid grid-cols-1 gap-3 text-sm">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Plano Selecionado:</span>
-                <PlanBadge plan={patient.plan} />
+                <PlanBadge plan={patient.vivaPlanName || ''} />
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Data de Início:</span>
-                <span className="font-medium">{formatFullDate(patient.startDate)}</span>
+                <span className="font-medium">{formatFullDate(patient.vivaStartDate)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Data de Término:</span>
-                <span className="font-medium">{formatFullDate(patient.endDate)}</span>
+                <span className="font-medium">{formatFullDate(patient.vivaEndDate)}</span>
               </div>
             </div>
           </div>

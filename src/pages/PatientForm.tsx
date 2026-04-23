@@ -16,8 +16,6 @@ import {
 import { patientSchema, PatientFormValues } from '@/schemas/patient-schema'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import { PatientPersonalSection } from '@/components/patients/form/PatientPersonalSection'
-import { PatientPlanSection } from '@/components/patients/form/PatientPlanSection'
-import { PatientProfessionalsSection } from '@/components/patients/form/PatientProfessionalsSection'
 import { PatientVivaPlanSection } from '@/components/patients/form/PatientVivaPlanSection'
 import { PatientFormSkeleton } from '@/components/patients/PatientSkeletons'
 import { usePatientsStore } from '@/stores/patients-store'
@@ -41,17 +39,12 @@ export default function PatientForm() {
       phone: '',
       email: '',
       address: '',
-      plan: '3 meses',
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: '',
-      status: 'Ativo',
-      professionals: [],
+      vivaPlanId: '',
+      vivaStartDate: '',
+      vivaEndDate: '',
+      vivaStatus: 'Ativo',
     },
   })
-
-  const startDate = form.watch('startDate')
-  const planType = form.watch('plan')
-  const professionals = form.watch('professionals')
 
   const loadData = async () => {
     if (!id) return
@@ -62,8 +55,6 @@ export default function PatientForm() {
       const birthDateStr = data.paciente.data_nascimento
         ? data.paciente.data_nascimento.substring(0, 10)
         : ''
-      const startDateStr = data.plano?.data_inicio ? data.plano.data_inicio.substring(0, 10) : ''
-      const endDateStr = data.plano?.data_termino ? data.plano.data_termino.substring(0, 10) : ''
 
       form.reset({
         name: data.paciente.nome,
@@ -71,16 +62,6 @@ export default function PatientForm() {
         phone: data.paciente.telefone || '',
         email: data.paciente.email || '',
         address: data.paciente.endereco || '',
-        plan: data.plano?.tipo_plano ? (data.plano.tipo_plano as any) : 'Sem plano',
-        startDate: startDateStr || new Date().toISOString().split('T')[0],
-        endDate: endDateStr,
-        status: data.plano?.status ? (data.plano.status as any) : 'Ativo',
-        professionals: data.profissionais.map((p: any) => ({
-          profissional: p.profissional,
-          tipoSessao: p.tipo_sessao,
-          valorSessao: p.valor_sessao,
-          frequencia: p.frequencia,
-        })) as any[],
         vivaPlanId: data.planoViva?.plano_viva_id || '',
         vivaStartDate: data.planoViva?.data_inicio
           ? data.planoViva.data_inicio.substring(0, 10)
@@ -102,43 +83,15 @@ export default function PatientForm() {
     loadData()
   }, [id])
 
-  useEffect(() => {
-    if (startDate && planType && planType !== 'Sem plano') {
-      const date = new Date(startDate + 'T12:00:00Z')
-      const months = parseInt(planType.charAt(0))
-      date.setMonth(date.getMonth() + months)
-      form.setValue('endDate', date.toISOString().split('T')[0], { shouldValidate: true })
-    } else if (planType === 'Sem plano') {
-      form.setValue('endDate', '')
-    }
-  }, [startDate, planType, form])
-
-  const { totalSessions, totalMargin } = useMemo(() => {
-    let sessions = 0
-    let margin = 0
-    const months = planType && planType !== 'Sem plano' ? parseInt(planType.charAt(0)) : 0
-
-    professionals.forEach((p) => {
-      let s = 0
-      if (p.frequencia === 'Semanal') s = 4 * months
-      else if (p.frequencia === 'Quinzenal') s = 2 * months
-      else if (p.frequencia === 'Mensal') s = 1 * months
-      else if (p.frequencia === 'Conforme demanda') s = 1
-      sessions += s
-      margin += s * (Number(p.valorSessao) || 0)
-    })
-    return { totalSessions: sessions, totalMargin: margin }
-  }, [professionals, planType])
-
   const onSubmit = async (data: PatientFormValues) => {
     if (!user?.id) return toast.error('Sua sessão expirou.')
     setIsSubmitting(true)
     try {
       if (isEditMode && id) {
-        await updatePacienteCompleto(id, data, user.id, totalMargin)
+        await updatePacienteCompleto(id, data, user.id)
         toast.success('Paciente atualizado com sucesso!')
       } else {
-        await createPacienteCompleto(data, user.id, totalMargin)
+        await createPacienteCompleto(data, user.id)
         toast.success('Paciente criado com sucesso!')
       }
       refetch()
@@ -211,49 +164,10 @@ export default function PatientForm() {
 
           <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle>Plano Skip</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <PatientPlanSection form={form} />
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm">
-            <CardContent className="pt-6">
-              <PatientProfessionalsSection form={form} />
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm">
-            <CardHeader>
               <CardTitle>Plano VIVA</CardTitle>
             </CardHeader>
             <CardContent>
               <PatientVivaPlanSection form={form} />
-            </CardContent>
-          </Card>
-
-          <Card className="bg-primary/5 border-primary/20 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6">
-                <div>
-                  <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
-                    Sessões Previstas
-                  </p>
-                  <p className="text-4xl font-bold mt-1 text-foreground">{totalSessions}</p>
-                </div>
-                <Separator orientation="vertical" className="hidden sm:block h-16 bg-primary/20" />
-                <div className="sm:text-right w-full sm:w-auto">
-                  <p className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
-                    Margem Estimada
-                  </p>
-                  <p className="text-4xl font-bold text-primary mt-1">
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-                      totalMargin,
-                    )}
-                  </p>
-                </div>
-              </div>
             </CardContent>
           </Card>
 

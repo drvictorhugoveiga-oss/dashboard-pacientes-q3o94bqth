@@ -72,23 +72,27 @@ export default function RelatoriosPage() {
     let endD: Date | null = null
 
     switch (periodo) {
-      case 'this_month':
+      case 'this_month': {
         startD = startOfMonth(now)
         endD = endOfMonth(now)
         break
-      case 'last_month':
+      }
+      case 'last_month': {
         const last = subMonths(now, 1)
         startD = startOfMonth(last)
         endD = endOfMonth(last)
         break
-      case 'last_3':
+      }
+      case 'last_3': {
         startD = startOfMonth(subMonths(now, 3))
         endD = endOfMonth(now)
         break
-      case 'last_6':
+      }
+      case 'last_6': {
         startD = startOfMonth(subMonths(now, 6))
         endD = endOfMonth(now)
         break
+      }
     }
 
     if (startD && endD) {

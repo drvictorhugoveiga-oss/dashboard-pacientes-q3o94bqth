@@ -25,6 +25,7 @@ import {
 import { deletePaciente } from '@/services/pacientes'
 import { toast } from 'sonner'
 import { usePatientsStore } from '@/stores/patients-store'
+import { getErrorMessage } from '@/lib/pocketbase/errors'
 
 interface PatientTableProps {
   patients: Patient[]
@@ -45,7 +46,7 @@ export function PatientTable({ patients, onViewDetails, onEdit }: PatientTablePr
       toast.success('Paciente removido com sucesso.')
       refetch()
     } catch (error) {
-      toast.error('Erro ao remover paciente.')
+      toast.error(getErrorMessage(error))
     } finally {
       setIsDeleting(false)
       setPatientToDelete(null)

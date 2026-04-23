@@ -47,19 +47,24 @@ export function PatientVivaPlanSection({ form }: { form: UseFormReturn<PatientFo
         render={({ field }) => (
           <FormItem>
             <FormLabel>Plano VIVA (Opcional)</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value || ''}>
+            <Select
+              onValueChange={(val) => field.onChange(val === 'none' ? '' : val)}
+              value={field.value || 'none'}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um Plano VIVA" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="">Sem Plano VIVA</SelectItem>
-                {planosViva.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.nome_plano} ({p.duracao_meses} meses - R$ {p.valor_plano})
-                  </SelectItem>
-                ))}
+                <SelectItem value="none">Sem Plano VIVA</SelectItem>
+                {planosViva
+                  .filter((p) => p.id && p.id.trim() !== '')
+                  .map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.nome_plano} ({p.duracao_meses} meses - R$ {p.valor_plano})
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
             <FormMessage />

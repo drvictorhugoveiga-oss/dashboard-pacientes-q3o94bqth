@@ -18,6 +18,7 @@ import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import { PatientPersonalSection } from '@/components/patients/form/PatientPersonalSection'
 import { PatientPlanSection } from '@/components/patients/form/PatientPlanSection'
 import { PatientProfessionalsSection } from '@/components/patients/form/PatientProfessionalsSection'
+import { PatientVivaPlanSection } from '@/components/patients/form/PatientVivaPlanSection'
 import { PatientFormSkeleton } from '@/components/patients/PatientSkeletons'
 import { usePatientsStore } from '@/stores/patients-store'
 import { AlertCircle } from 'lucide-react'
@@ -74,12 +75,20 @@ export default function PatientForm() {
         startDate: startDateStr || new Date().toISOString().split('T')[0],
         endDate: endDateStr,
         status: data.plano?.status ? (data.plano.status as any) : 'Ativo',
-        professionals: data.profissionais.map((p) => ({
+        professionals: data.profissionais.map((p: any) => ({
           profissional: p.profissional,
           tipoSessao: p.tipo_sessao,
           valorSessao: p.valor_sessao,
           frequencia: p.frequencia,
         })) as any[],
+        vivaPlanId: data.planoViva?.plano_viva_id || '',
+        vivaStartDate: data.planoViva?.data_inicio
+          ? data.planoViva.data_inicio.substring(0, 10)
+          : '',
+        vivaEndDate: data.planoViva?.data_termino
+          ? data.planoViva.data_termino.substring(0, 10)
+          : '',
+        vivaStatus: data.planoViva?.status || 'Ativo',
       })
     } catch (e) {
       console.error(e)
@@ -212,6 +221,15 @@ export default function PatientForm() {
           <Card className="shadow-sm">
             <CardContent className="pt-6">
               <PatientProfessionalsSection form={form} />
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Plano VIVA</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PatientVivaPlanSection form={form} />
             </CardContent>
           </Card>
 

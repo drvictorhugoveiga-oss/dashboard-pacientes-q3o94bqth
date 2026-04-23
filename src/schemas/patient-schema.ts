@@ -32,6 +32,10 @@ export const patientSchema = z
       required_error: 'Status é obrigatório',
     }),
     professionals: z.array(professionalSchema).default([]),
+    vivaPlanId: z.string().optional().or(z.literal('')),
+    vivaStartDate: z.string().optional().or(z.literal('')),
+    vivaEndDate: z.string().optional().or(z.literal('')),
+    vivaStatus: z.enum(['Ativo', 'Inativo', 'Vencido']).optional(),
   })
   .refine(
     (data) => {

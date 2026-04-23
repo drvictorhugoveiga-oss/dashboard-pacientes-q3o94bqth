@@ -8,6 +8,7 @@ export const getPacienteCompleto = async (id: string) => {
   const paciente = await pb.collection('pacientes').getOne(id)
   let plano = null
   let profissionais = []
+  let planoViva = null
   try {
     plano = await pb
       .collection('planos_skip')
@@ -17,10 +18,19 @@ export const getPacienteCompleto = async (id: string) => {
         .collection('profissionais_sessoes')
         .getFullList({ filter: `plano="${plano.id}"` })
     }
-  } catch (e) {
-    // Ignorar se não tiver plano
+  } catch {
+    /* intentionally ignored */
   }
-  return { paciente, plano, profissionais }
+
+  try {
+    planoViva = await pb
+      .collection('planos_pacientes')
+      .getFirstListItem(`paciente_id="${id}"`, { sort: '-created' })
+  } catch {
+    /* intentionally ignored */
+  }
+
+  return { paciente, plano, profissionais, planoViva }
 }
 
 export const createPacienteCompleto = async (data: any, userId: string, totalMargin: number) => {
@@ -67,6 +77,18 @@ export const createPacienteCompleto = async (data: any, userId: string, totalMar
       })
     }
   }
+
+  if (data.vivaPlanId) {
+    await pb.collection('planos_pacientes').create({
+      user: userId,
+      paciente_id: paciente.id,
+      plano_viva_id: data.vivaPlanId,
+      data_inicio: data.vivaStartDate || new Date().toISOString(),
+      data_termino: data.vivaEndDate || new Date().toISOString(),
+      status: data.vivaStatus || 'Ativo',
+    })
+  }
+
   return paciente
 }
 
@@ -144,6 +166,31 @@ export const updatePacienteCompleto = async (
         total_sessoes_calculado: sessoesCalc,
       })
     }
+  }
+
+  let planoVivaOld = null
+  try {
+    planoVivaOld = await pb.collection('planos_pacientes').getFirstListItem(`paciente_id="${id}"`)
+  } catch {
+    /* intentionally ignored */
+  }
+
+  if (data.vivaPlanId) {
+    const vData = {
+      user: userId,
+      paciente_id: id,
+      plano_viva_id: data.vivaPlanId,
+      data_inicio: data.vivaStartDate || new Date().toISOString(),
+      data_termino: data.vivaEndDate || new Date().toISOString(),
+      status: data.vivaStatus || 'Ativo',
+    }
+    if (planoVivaOld) {
+      await pb.collection('planos_pacientes').update(planoVivaOld.id, vData)
+    } else {
+      await pb.collection('planos_pacientes').create(vData)
+    }
+  } else if (planoVivaOld) {
+    await pb.collection('planos_pacientes').delete(planoVivaOld.id)
   }
 
   return paciente

@@ -43,9 +43,6 @@ migrate(
         { prof: 'Psicóloga', valor: 250, qtd: 4 },
         { prof: 'Fisioterapeuta', valor: 150, qtd: 4 },
         { prof: 'Nutricionista', valor: 450, qtd: 1 },
-        { prof: 'Fonoaudióloga', valor: 168, qtd: 0 },
-        { prof: 'Enfermeira', valor: 0, qtd: 0 },
-        { prof: 'Médico', valor: 0, qtd: 0 },
       ]
 
       for (const c of custos) {

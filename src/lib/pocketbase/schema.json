@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-23T02:56:59.828Z",
+  "generatedAt": "2026-04-23T03:02:57.557Z",
   "collections": [
     {
       "name": "users",
@@ -513,6 +513,225 @@
         {
           "name": "data_pagamento",
           "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "planos_viva_config",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != '' && user = @request.auth.id",
+        "view": "@request.auth.id != '' && user = @request.auth.id",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != '' && user = @request.auth.id",
+        "delete": "@request.auth.id != '' && user = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "nome_plano",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "duracao_meses",
+          "type": "number",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "valor_plano",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "prolabore_medico_percentual",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "custos_equipe_config",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != '' && user = @request.auth.id",
+        "view": "@request.auth.id != '' && user = @request.auth.id",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != '' && user = @request.auth.id",
+        "delete": "@request.auth.id != '' && user = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "plano_viva_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "planos_viva_config"
+        },
+        {
+          "name": "profissional",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": [
+            "Médico",
+            "Nutricionista",
+            "Enfermeira",
+            "Fonoaudióloga",
+            "Psicóloga",
+            "Fisioterapeuta"
+          ]
+        },
+        {
+          "name": "valor_sessao",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "quantidade_sessoes",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "planos_pacientes",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != '' && user = @request.auth.id",
+        "view": "@request.auth.id != '' && user = @request.auth.id",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != '' && user = @request.auth.id",
+        "delete": "@request.auth.id != '' && user = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "paciente_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "pacientes"
+        },
+        {
+          "name": "plano_viva_id",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "planos_viva_config"
+        },
+        {
+          "name": "data_inicio",
+          "type": "date",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "data_termino",
+          "type": "date",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Ativo", "Inativo", "Vencido"]
+        },
+        {
+          "name": "valor_total_plano",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "prolabore_medico_valor",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "custo_equipe_total",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "saldo_liquido",
+          "type": "number",
           "required": false,
           "system": false
         },

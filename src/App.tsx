@@ -7,6 +7,7 @@ import PatientForm from './pages/PatientForm'
 import SessoesPage from './pages/sessoes/SessoesPage'
 import Reminders from './pages/Reminders'
 import NotFound from './pages/NotFound'
+import RelatoriosPage from './pages/relatorios/RelatoriosPage'
 import Layout from './components/Layout'
 import { PatientsProvider } from '@/stores/patients-store'
 import { AuthProvider } from '@/hooks/use-auth'
@@ -29,6 +30,8 @@ const App = () => (
                 <Route path="/pacientes/editar/:id" element={<PatientForm />} />
                 <Route path="/lembretes" element={<Reminders />} />
                 <Route path="/sessoes" element={<SessoesPage />} />
+                <Route path="/relatorios" element={<RelatoriosPage />} />
+                <Route path="/planos" element={<Index />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />

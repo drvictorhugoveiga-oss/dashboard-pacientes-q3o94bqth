@@ -7,6 +7,8 @@ import {
   ChevronRight,
   LogOut,
   CalendarDays,
+  FileText,
+  TrendingUp,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -37,8 +39,10 @@ export function AppSidebar() {
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, url: '/' },
     { title: 'Pacientes', icon: Users, url: '/' },
+    { title: 'Planos', icon: FileText, url: '/planos' },
+    { title: 'Lembretes', icon: Bell, url: '/lembretes' },
     { title: 'Sessões', icon: CalendarDays, url: '/sessoes' },
-    { title: 'Configurações', icon: Settings, url: '#' },
+    { title: 'Relatórios Financeiros', icon: TrendingUp, url: '/relatorios' },
   ]
 
   return (

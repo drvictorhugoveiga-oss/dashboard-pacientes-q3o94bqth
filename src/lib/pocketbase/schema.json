@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-23T02:20:11.910Z",
+  "generatedAt": "2026-04-23T02:29:15.250Z",
   "collections": [
     {
       "name": "users",
@@ -458,6 +458,80 @@
         "CREATE INDEX idx_sessoes_paciente ON sessoes (paciente)",
         "CREATE INDEX idx_sessoes_plano ON sessoes (plano)"
       ]
+    },
+    {
+      "name": "pagamentos_profissionais",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != '' && user = @request.auth.id",
+        "view": "@request.auth.id != '' && user = @request.auth.id",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != '' && user = @request.auth.id",
+        "delete": "@request.auth.id != '' && user = @request.auth.id"
+      },
+      "fields": [
+        {
+          "name": "user",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "users"
+        },
+        {
+          "name": "profissional",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": [
+            "Médico",
+            "Nutricionista",
+            "Enfermeira",
+            "Fonoaudióloga",
+            "Psicóloga",
+            "Fisioterapeuta"
+          ]
+        },
+        {
+          "name": "total_sessoes",
+          "type": "number",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "valor_total",
+          "type": "number",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "status_pagamento",
+          "type": "select",
+          "required": true,
+          "system": false,
+          "selectValues": ["Pendente", "Pago", "Parcial"]
+        },
+        {
+          "name": "data_pagamento",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
     }
   ]
 }

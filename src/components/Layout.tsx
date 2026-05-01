@@ -43,6 +43,7 @@ export function AppSidebar() {
     { title: 'Lembretes', icon: Bell, url: '/lembretes' },
     { title: 'Sessões', icon: CalendarDays, url: '/sessoes' },
     { title: 'Relatórios Financeiros', icon: TrendingUp, url: '/relatorios' },
+    { title: 'Config. Planos', icon: Settings, url: '/configuracoes/planos' },
   ]
 
   return (

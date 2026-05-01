@@ -1,6 +1,9 @@
 import pb from '@/lib/pocketbase/client'
 
-export const getPlanosViva = () => pb.collection('planos_viva_config').getFullList()
+export const getPlanosViva = () =>
+  pb.collection('planos_viva_config').getFullList({ sort: 'created' })
+
+export const getCustosEquipe = () => pb.collection('custos_equipe_config').getFullList()
 
 export const getPlanosPacientesExpandidos = () =>
   pb

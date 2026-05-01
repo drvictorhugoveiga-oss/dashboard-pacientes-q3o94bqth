@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { SummaryCards } from './SummaryCards'
+import { RentabilidadePlanos } from './RentabilidadePlanos'
 import { PlanosTable } from './PlanosTable'
 import { PagamentosTable } from './PagamentosTable'
 import { FinancialCharts } from './Charts'
@@ -188,6 +189,8 @@ export default function RelatoriosPage() {
       {!loading && (
         <div className="space-y-8 print:space-y-4">
           <SummaryCards sessoes={filteredSessoes} pagamentos={filteredPagamentos} />
+
+          <RentabilidadePlanos />
 
           <FinancialCharts sessoes={filteredSessoes} pagamentos={filteredPagamentos} />
 

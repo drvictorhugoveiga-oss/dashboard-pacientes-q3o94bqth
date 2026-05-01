@@ -11,6 +11,7 @@ import NotFound from './pages/NotFound'
 import RelatoriosPage from './pages/relatorios/RelatoriosPage'
 import ConfiguracoesVivaPage from './pages/configuracoes/ConfiguracoesVivaPage'
 import PlanosConfigPage from './pages/configuracoes/PlanosConfigPage'
+import CustosEquipePage from './pages/configuracoes/CustosEquipePage'
 import Layout from './components/Layout'
 import { PatientsProvider } from '@/stores/patients-store'
 import { AuthProvider } from '@/hooks/use-auth'
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/planos" element={<PlanosPage />} />
                 <Route path="/configuracoes-viva" element={<ConfiguracoesVivaPage />} />
                 <Route path="/configuracoes/planos" element={<PlanosConfigPage />} />
+                <Route path="/configuracoes/custos-equipe" element={<CustosEquipePage />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />

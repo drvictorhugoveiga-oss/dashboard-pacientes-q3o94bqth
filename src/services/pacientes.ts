@@ -37,22 +37,32 @@ export const getPacienteCompleto = async (id: string) => {
 }
 
 export const createPacienteCompleto = async (data: any, userId: string) => {
-  const paciente = await pb.collection('pacientes').create({
+  const pacienteData: any = {
     user: userId,
     nome: data.name,
-    data_nascimento: data.birthDate,
-    telefone: data.phone,
-    email: data.email,
-    endereco: data.address,
-  })
+    telefone: data.phone || '',
+    email: data.email || '',
+    endereco: data.address || '',
+  }
+  if (data.birthDate) {
+    pacienteData.data_nascimento = new Date(data.birthDate + 'T12:00:00Z').toISOString()
+  } else {
+    pacienteData.data_nascimento = ''
+  }
+
+  const paciente = await pb.collection('pacientes').create(pacienteData)
 
   if (data.vivaPlanId) {
     await pb.collection('planos_pacientes').create({
       user: userId,
       paciente_id: paciente.id,
       plano_viva_id: data.vivaPlanId,
-      data_inicio: data.vivaStartDate || new Date().toISOString(),
-      data_termino: data.vivaEndDate || new Date().toISOString(),
+      data_inicio: data.vivaStartDate
+        ? new Date(data.vivaStartDate + 'T12:00:00Z').toISOString()
+        : new Date().toISOString(),
+      data_termino: data.vivaEndDate
+        ? new Date(data.vivaEndDate + 'T12:00:00Z').toISOString()
+        : new Date().toISOString(),
       status: data.vivaStatus || 'Ativo',
     })
   }
@@ -61,13 +71,19 @@ export const createPacienteCompleto = async (data: any, userId: string) => {
 }
 
 export const updatePacienteCompleto = async (id: string, data: any, userId: string) => {
-  const paciente = await pb.collection('pacientes').update(id, {
+  const pacienteData: any = {
     nome: data.name,
-    data_nascimento: data.birthDate,
-    telefone: data.phone,
-    email: data.email,
-    endereco: data.address,
-  })
+    telefone: data.phone || '',
+    email: data.email || '',
+    endereco: data.address || '',
+  }
+  if (data.birthDate) {
+    pacienteData.data_nascimento = new Date(data.birthDate + 'T12:00:00Z').toISOString()
+  } else {
+    pacienteData.data_nascimento = ''
+  }
+
+  const paciente = await pb.collection('pacientes').update(id, pacienteData)
 
   let planoVivaOld = null
   try {
@@ -81,8 +97,12 @@ export const updatePacienteCompleto = async (id: string, data: any, userId: stri
       user: userId,
       paciente_id: id,
       plano_viva_id: data.vivaPlanId,
-      data_inicio: data.vivaStartDate || new Date().toISOString(),
-      data_termino: data.vivaEndDate || new Date().toISOString(),
+      data_inicio: data.vivaStartDate
+        ? new Date(data.vivaStartDate + 'T12:00:00Z').toISOString()
+        : new Date().toISOString(),
+      data_termino: data.vivaEndDate
+        ? new Date(data.vivaEndDate + 'T12:00:00Z').toISOString()
+        : new Date().toISOString(),
       status: data.vivaStatus || 'Ativo',
     }
     if (planoVivaOld) {

@@ -44,6 +44,7 @@ export function AppSidebar() {
     { title: 'Sessões', icon: CalendarDays, url: '/sessoes' },
     { title: 'Relatórios Financeiros', icon: TrendingUp, url: '/relatorios' },
     { title: 'Config. Planos', icon: Settings, url: '/configuracoes/planos' },
+    { title: 'Custos da Equipe', icon: Users, url: '/configuracoes/custos-equipe' },
   ]
 
   return (
